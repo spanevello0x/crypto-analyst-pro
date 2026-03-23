@@ -1,0 +1,6 @@
+# Configuração pessoal (não commitar dados de usuário)
+CONFIG.md
+
+# Sistema
+.DS_Store
+*.log

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Analyst Pro — Workflow Visual</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #13131a;
+    --card2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #f7931a;
+    --accent2: #627eea;
+    --accent3: #9945ff;
+    --green: #00d4aa;
+    --red: #ff4466;
+    --yellow: #ffd700;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --bull: #00d4aa;
+    --bear: #ff4466;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0a0a0f 0%, #13131a 50%, #1a1020 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(247,147,26,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(247,147,26,0.1);
+    border: 1px solid rgba(247,147,26,0.3);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #f7931a, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto 24px;
+  }
+  .header-tags {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .tag {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .tag.green { border-color: rgba(0,212,170,0.3); color: var(--green); background: rgba(0,212,170,0.05); }
+  .tag.orange { border-color: rgba(247,147,26,0.3); color: var(--accent); background: rgba(247,147,26,0.05); }
+  .tag.blue { border-color: rgba(98,126,234,0.3); color: var(--accent2); background: rgba(98,126,234,0.05); }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* SECTION */
+  .section { margin-bottom: 48px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* OVERVIEW CARDS */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .overview-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .overview-card .icon { font-size: 28px; margin-bottom: 8px; }
+  .overview-card .value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .overview-card .label { font-size: 12px; color: var(--muted); }
+
+  /* PIPELINE */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .phase {
+    display: flex;
+    gap: 20px;
+    position: relative;
+  }
+  .phase:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 56px;
+    bottom: -1px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border), transparent);
+  }
+
+  .phase-number {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    flex-shrink: 0;
+    border: 2px solid;
+    position: relative;
+    z-index: 1;
+  }
+
+  .phase-content {
+    flex: 1;
+    padding-bottom: 40px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-top: 12px;
+  }
+
+  .phase-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .phase-subtitle { font-size: 13px; color: var(--muted); }
+  .phase-time {
+    margin-left: auto;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* AGENT CARDS */
+  .agents-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .agent-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .agent-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+  .agent-card.nerd::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .agent-card.trader::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .agent-card.bull::before { background: linear-gradient(90deg, var(--bull), transparent); }
+  .agent-card.bear::before { background: linear-gradient(90deg, var(--bear), transparent); }
+  .agent-card.aspira::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+
+  .agent-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .agent-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .agent-avatar.nerd { background: rgba(98,126,234,0.15); }
+  .agent-avatar.trader { background: rgba(247,147,26,0.15); }
+  .agent-avatar.bull { background: rgba(0,212,170,0.15); }
+  .agent-avatar.bear { background: rgba(255,68,102,0.15); }
+  .agent-avatar.aspira { background: rgba(153,69,255,0.15); }
+
+  .agent-name { font-weight: 700; font-size: 14px; }
+  .agent-model {
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: auto;
+  }
+
+  .agent-tasks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .agent-tasks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .agent-tasks li::before {
+    content: '→';
+    color: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* PARALLEL BADGE */
+  .parallel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(98,126,234,0.1);
+    border: 1px solid rgba(98,126,234,0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+  .parallel-badge::before { content: '⚡'; }
+
+  /* ARROW */
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+    color: var(--border);
+    font-size: 20px;
+  }
+
+  /* REPORT PREVIEW */
+  .report-preview {
+    background: #0d0d14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .report-preview .rline-title { color: var(--accent); font-weight: 700; }
+  .report-preview .rline-sep { color: var(--border); }
+  .report-preview .rline-price { color: var(--yellow); }
+  .report-preview .rline-tech { color: var(--accent2); }
+  .report-preview .rline-bull { color: var(--bull); }
+  .report-preview .rline-bear { color: var(--bear); }
+  .report-preview .rline-decision-buy { color: var(--green); font-weight: 700; font-size: 14px; }
+  .report-preview .rline-decision-wait { color: var(--yellow); font-weight: 700; font-size: 14px; }
+  .report-preview .rline-decision-avoid { color: var(--red); font-weight: 700; font-size: 14px; }
+  .report-preview .rline-muted { color: var(--muted); }
+
+  /* SETUP FLOW */
+  .setup-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .setup-step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+  }
+  .setup-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(247,147,26,0.15);
+    border: 1px solid rgba(247,147,26,0.3);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .setup-step-icon { font-size: 22px; margin-bottom: 8px; }
+  .setup-step-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .setup-step-ex { font-size: 11px; color: var(--muted); }
+
+  /* CONFIG */
+  .config-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .config-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--card2);
+  }
+  .config-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .config-header .dot.r { background: #ff5f56; }
+  .config-header .dot.y { background: #ffbd2e; }
+  .config-header .dot.g { background: #27c93f; }
+  .config-body {
+    padding: 16px;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .cfg-key { color: var(--accent2); }
+  .cfg-val { color: var(--green); }
+  .cfg-comment { color: var(--muted); }
+
+  /* APIs */
+  .api-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .api-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .api-icon { font-size: 24px; }
+  .api-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+  .api-desc { font-size: 11px; color: var(--muted); }
+  .api-free {
+    margin-left: auto;
+    font-size: 10px;
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.2);
+    color: var(--green);
+    border-radius: 4px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+
+  /* COST */
+  .cost-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-row .cost-label { color: var(--muted); }
+  .cost-row .cost-val { font-weight: 600; }
+  .cost-row.total { background: rgba(247,147,26,0.05); }
+  .cost-row.total .cost-val { color: var(--accent); font-size: 16px; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .agents-row { grid-template-columns: 1fr; }
+    .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    .phase { flex-direction: column; }
+    .phase-number { align-self: flex-start; }
+    .phase:not(:last-child)::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">📊 OpenClaw Skill</div>
+  <h1>Crypto Analyst Pro</h1>
+  <p>Análise diária automática com debate Bull vs Bear, orquestrada por múltiplos agentes de IA.</p>
+  <div class="header-tags">
+    <span class="tag green">100% APIs Gratuitas</span>
+    <span class="tag orange">Claude Haiku + Sonnet</span>
+    <span class="tag blue">Multi-Agent Pipeline</span>
+    <span class="tag">Setup em 4 perguntas</span>
+    <span class="tag">Telegram / WhatsApp</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="icon">🤖</div>
+      <div class="value">4</div>
+      <div class="label">Agentes por análise</div>
+    </div>
+    <div class="overview-card">
+      <div class="icon">⏱️</div>
+      <div class="value">~8min</div>
+      <div class="label">Por ativo analisado</div>
+    </div>
+    <div class="overview-card">
+      <div class="icon">💰</div>
+      <div class="value">~$0.08</div>
+      <div class="label">Custo por análise</div>
+    </div>
+    <div class="overview-card">
+      <div class="icon">📡</div>
+      <div class="value">0</div>
+      <div class="label">API keys necessárias</div>
+    </div>
+    <div class="overview-card">
+      <div class="icon">📊</div>
+      <div class="value">∞</div>
+      <div class="label">Ativos suportados</div>
+    </div>
+  </div>
+
+  <!-- SETUP FLOW -->
+  <div class="section">
+    <div class="section-title">🧙 Setup — 4 perguntas</div>
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="setup-step-num">1</div>
+        <div class="setup-step-icon">📈</div>
+        <div class="setup-step-q">Quais ativos?</div>
+        <div class="setup-step-ex">BTC, ETH, SOL...</div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-step-num">2</div>
+        <div class="setup-step-icon">⏰</div>
+        <div class="setup-step-q">Que horas?</div>
+        <div class="setup-step-ex">08:00 (horário local)</div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-step-num">3</div>
+        <div class="setup-step-icon">👤</div>
+        <div class="setup-step-q">Perfil de trading?</div>
+        <div class="setup-step-ex">Holder / Swing / Day</div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-step-num">4</div>
+        <div class="setup-step-icon">📱</div>
+        <div class="setup-step-q">Onde receber?</div>
+        <div class="setup-step-ex">Telegram ou WhatsApp</div>
+      </div>
+      <div class="setup-step" style="border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.03);">
+        <div class="setup-step-num" style="background: rgba(0,212,170,0.15); border-color: rgba(0,212,170,0.3); color: var(--green);">✓</div>
+        <div class="setup-step-icon">🚀</div>
+        <div class="setup-step-q">Cron ativado!</div>
+        <div class="setup-step-ex">Análises todo dia no horário</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="section">
+    <div class="section-title">🏗️ Pipeline de análise</div>
+    <div class="pipeline">
+
+      <!-- PHASE 1 -->
+      <div class="phase">
+        <div class="phase-number" style="background: rgba(98,126,234,0.1); border-color: rgba(98,126,234,0.4); color: var(--accent2);">1</div>
+        <div class="phase-content">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">Coleta de dados</div>
+              <div class="phase-subtitle">NERD + TRADER rodando em paralelo</div>
+            </div>
+            <div class="phase-time">~2–3 min</div>
+          </div>
+          <div class="parallel-badge">Execução paralela — ambos ao mesmo tempo</div>
+          <div class="agents-row">
+            <div class="agent-card nerd">
+              <div class="agent-header">
+                <div class="agent-avatar nerd">🧠</div>
+                <div>
+                  <div class="agent-name">NERD</div>
+                  <div class="agent-model" style="color:var(--accent2)">Haiku</div>
+                </div>
+              </div>
+              <ul class="agent-tasks">
+                <li>Notícias últimas 24h + impacto</li>
+                <li>Fear & Greed Index (API real)</li>
+                <li>On-chain: flows, whales, hashrate</li>
+                <li>Macro: DXY, S&P500, Fed</li>
+                <li>Dominância BTC + market cap cripto</li>
+              </ul>
+            </div>
+            <div class="agent-card trader">
+              <div class="agent-header">
+                <div class="agent-avatar trader">📈</div>
+                <div>
+                  <div class="agent-name">TRADER</div>
+                  <div class="agent-model" style="color:var(--accent)">Haiku</div>
+                </div>
+              </div>
+              <ul class="agent-tasks">
+                <li>Preço atual + variação 24h/7d</li>
+                <li>Tendência 1h / 4h / 1D</li>
+                <li>Suportes e resistências</li>
+                <li>RSI 14 + MACD + Volume</li>
+                <li>Funding rate + Open Interest</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase">
+        <div class="phase-number" style="background: rgba(0,212,170,0.1); border-color: rgba(0,212,170,0.4); color: var(--bull);">2</div>
+        <div class="phase-content">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">🐂 Bull Case</div>
+              <div class="phase-subtitle">TRADER constrói o argumento comprador</div>
+            </div>
+            <div class="phase-time">~1 min</div>
+          </div>
+          <div class="agents-row">
+            <div class="agent-card bull">
+              <div class="agent-header">
+                <div class="agent-avatar bull">🐂</div>
+                <div>
+                  <div class="agent-name">TRADER (modo Bull)</div>
+                  <div class="agent-model" style="color:var(--bull)">Sonnet</div>
+                </div>
+              </div>
+              <ul class="agent-tasks">
+                <li>Tese principal de alta (1 parágrafo)</li>
+                <li>3 argumentos com números reais</li>
+                <li>Gatilho: o que pode acelerar a subida</li>
+                <li>Alvo de preço (2-4 semanas)</li>
+                <li>Invalidação: onde a tese quebra</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase">
+        <div class="phase-number" style="background: rgba(255,68,102,0.1); border-color: rgba(255,68,102,0.4); color: var(--bear);">3</div>
+        <div class="phase-content">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">🐻 Bear Case</div>
+              <div class="phase-subtitle">TRADER refuta o bull ponto a ponto</div>
+            </div>
+            <div class="phase-time">~1 min</div>
+          </div>
+          <div class="agents-row">
+            <div class="agent-card bear">
+              <div class="agent-header">
+                <div class="agent-avatar bear">🐻</div>
+                <div>
+                  <div class="agent-name">TRADER (modo Bear)</div>
+                  <div class="agent-model" style="color:var(--bear)">Sonnet</div>
+                </div>
+              </div>
+              <ul class="agent-tasks">
+                <li>Tese principal de baixa</li>
+                <li>Refutação dos 3 argumentos bull</li>
+                <li>3 riscos concretos com números</li>
+                <li>Gatilho: o que pode acelerar a queda</li>
+                <li>Alvo de queda realista</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 4 -->
+      <div class="phase">
+        <div class="phase-number" style="background: rgba(153,69,255,0.1); border-color: rgba(153,69,255,0.4); color: var(--accent3);">4</div>
+        <div class="phase-content">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">🎯 Síntese + Entrega</div>
+              <div class="phase-subtitle">ASPIRA decide e entrega o relatório</div>
+            </div>
+            <div class="phase-time">~1 min</div>
+          </div>
+          <div class="agents-row">
+            <div class="agent-card aspira">
+              <div class="agent-header">
+                <div class="agent-avatar aspira">🫡</div>
+                <div>
+                  <div class="agent-name">ASPIRA (Orquestrador)</div>
+                  <div class="agent-model" style="color:var(--accent3)">Sonnet</div>
+                </div>
+              </div>
+              <ul class="agent-tasks">
+                <li>Pondera bull vs bear com os dados</li>
+                <li>Considera perfil do usuário (holder/swing/day)</li>
+                <li>Decide: COMPRAR | AGUARDAR | EVITAR</li>
+                <li>Rating ⭐/5 + % confiança</li>
+                <li>Envia relatório via Telegram / WhatsApp</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REPORT PREVIEW -->
+  <div class="section">
+    <div class="section-title">📄 Exemplo de relatório gerado</div>
+    <div class="report-preview">
+      <div class="rline-title">📊 ANÁLISE BTC — 23/03 | 08:00 BRT</div>
+      <div class="rline-sep">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <br>
+      <div class="rline-price">💰 PREÇO: $70.743 | 24h: +2.82% | Semana: -3.87%</div>
+      <br>
+      <div class="rline-tech">📊 TÉCNICO</div>
+      <div>Tendência 4h: Altista (acima EMA20 + EMA50)</div>
+      <div>RSI: 56.52 — neutro com viés de alta</div>
+      <div>Funding: -0.00003 (short squeeze ativo)</div>
+      <div>Suporte: $70.000 / $69.000</div>
+      <div>Resistência: $71.500 / $72.000</div>
+      <br>
+      <div>🌍 CONTEXTO</div>
+      <div>Fear & Greed: 8 — Extreme Fear 🔴</div>
+      <div>Strategy comprou 1.031 BTC esta semana</div>
+      <div>Fed sem corte, petróleo >$100, tensão Iran-Israel</div>
+      <br>
+      <div class="rline-sep">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <div class="rline-bull">🐂 BULL — alvo: $75.000</div>
+      <div class="rline-bull">• Short squeeze: funding neg + OI 87k BTC</div>
+      <div class="rline-bull">• Volume 2-3x acima da média confirma bounce</div>
+      <div class="rline-bull">• Smart money: Strategy + ETFs +$230M semanal</div>
+      <br>
+      <div class="rline-bear">🐻 BEAR — alvo: $67.000</div>
+      <div class="rline-bear">• Squeeze já acabou: funding quase neutro</div>
+      <div class="rline-bear">• ETF outflows $405M pós-FOMC dominam</div>
+      <div class="rline-bear">• -44% do ATH, correlação BTC/S&P positiva</div>
+      <br>
+      <div class="rline-sep">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <div class="rline-decision-wait">🎯 DECISÃO: AGUARDAR</div>
+      <div>⭐3/5 | Confiança: 62%</div>
+      <br>
+      <div class="rline-muted">Upside até $72k (+1.8%) vs downside $67-68k (-4%)</div>
+      <div class="rline-muted">Aguardar confirmação acima de $72k ou entrada em $67-68k</div>
+      <br>
+      <div class="rline-muted">⚠️ Não é conselho financeiro.</div>
+    </div>
+  </div>
+
+  <!-- APIS -->
+  <div class="section">
+    <div class="section-title">📡 APIs utilizadas (todas gratuitas)</div>
+    <div class="api-grid">
+      <div class="api-card">
+        <div class="api-icon">🦎</div>
+        <div>
+          <div class="api-name">CoinGecko</div>
+          <div class="api-desc">Preço + variação 24h/7d</div>
+        </div>
+        <div class="api-free">Grátis</div>
+      </div>
+      <div class="api-card">
+        <div class="api-icon">🟡</div>
+        <div>
+          <div class="api-name">Binance</div>
+          <div class="api-desc">Candles 4h (OHLCV)</div>
+        </div>
+        <div class="api-free">Grátis</div>
+      </div>
+      <div class="api-card">
+        <div class="api-icon">📉</div>
+        <div>
+          <div class="api-name">Binance Futures</div>
+          <div class="api-desc">Funding rate + Open Interest</div>
+        </div>
+        <div class="api-free">Grátis</div>
+      </div>
+      <div class="api-card">
+        <div class="api-icon">😨</div>
+        <div>
+          <div class="api-name">alternative.me</div>
+          <div class="api-desc">Fear & Greed Index</div>
+        </div>
+        <div class="api-free">Grátis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="section">
+    <div class="section-title">⚙️ Configuração (CONFIG.md)</div>
+    <div class="config-block">
+      <div class="config-header">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <span style="margin-left:8px">CONFIG.md — gerado automaticamente no setup</span>
+      </div>
+      <div class="config-body">
+        <span class="cfg-key">ativos</span>: [<span class="cfg-val">"BTC"</span>, <span class="cfg-val">"ETH"</span>, <span class="cfg-val">"SOL"</span>]<br>
+        <span class="cfg-key">horario</span>: <span class="cfg-val">"08:00"</span>  <span class="cfg-comment"># horário local</span><br>
+        <span class="cfg-key">timezone</span>: <span class="cfg-val">"America/Sao_Paulo"</span><br>
+        <span class="cfg-key">perfil</span>: <span class="cfg-val">"swing"</span>  <span class="cfg-comment"># conservador | moderado | agressivo</span><br>
+        <span class="cfg-key">foco</span>: <span class="cfg-val">"swing"</span>  <span class="cfg-comment"># holder | swing | day</span><br>
+        <span class="cfg-key">canal</span>: <span class="cfg-val">"telegram:-100123456:450"</span><br>
+        <span class="cfg-key">idioma</span>: <span class="cfg-val">"pt"</span>  <span class="cfg-comment"># pt | en | es</span><br>
+        <span class="cfg-key">detalhe</span>: <span class="cfg-val">"completo"</span>  <span class="cfg-comment"># resumido | completo</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COST -->
+  <div class="section">
+    <div class="section-title">💰 Custo estimado</div>
+    <div class="config-block">
+      <div class="cost-row">
+        <span class="cost-label">Coleta (NERD + TRADER × Haiku)</span>
+        <span class="cost-val">~$0.01 / análise</span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-label">Bull + Bear + Síntese (Sonnet)</span>
+        <span class="cost-val">~$0.06 / análise</span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-label">Por dia — BTC + ETH</span>
+        <span class="cost-val">~$0.20–0.30</span>
+      </div>
+      <div class="cost-row total">
+        <span class="cost-label"><strong>Por mês — BTC + ETH + SOL</strong></span>
+        <span class="cost-val">~$12–15 / mês</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>Desenvolvido por <a href="https://instagram.com/intuscripto">Diego Spanevello</a> · Intus Cripto Club</p>
+  <p style="margin-top:8px; font-size:11px">Não é conselho financeiro. Use por sua conta e risco.</p>
+</div>
+
+</body>
+</html>
