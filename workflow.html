@@ -1,839 +1,691 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Analyst Pro — Workflow Visual</title>
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --card: #13131a;
-    --card2: #1a1a24;
-    --border: #2a2a3a;
-    --accent: #f7931a;
-    --accent2: #627eea;
-    --accent3: #9945ff;
-    --green: #00d4aa;
-    --red: #ff4466;
-    --yellow: #ffd700;
-    --text: #e8e8f0;
-    --muted: #6b6b88;
-    --bull: #00d4aa;
-    --bear: #ff4466;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTC Analyst Diário — PRD + Workflow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+      line-height: 1.7;
+      padding: 0;
+    }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+      border-bottom: 2px solid #f5c842;
+      padding: 48px 60px;
+    }
+    .header-top {
+      display: flex; align-items: center; gap: 20px; margin-bottom: 16px;
+    }
+    .header-icon { font-size: 52px; }
+    .header-title { font-size: 36px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    .header-sub { font-size: 15px; color: #f5c842; margin-top: 4px; }
+    .status-row {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-top: 20px;
+    }
+    .badge {
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    }
+    .badge-green { background: rgba(39,255,20,.12); color: #39FF14; border: 1px solid rgba(39,255,20,.3); }
+    .badge-yellow { background: rgba(245,200,66,.12); color: #f5c842; border: 1px solid rgba(245,200,66,.3); }
+    .badge-blue { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
+    .badge-purple { background: rgba(139,92,246,.12); color: #a78bfa; border: 1px solid rgba(139,92,246,.3); }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+    /* TABS */
+    .tabs {
+      display: flex; gap: 0;
+      background: #111118;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 0 60px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .tab-btn {
+      padding: 16px 24px;
+      background: none; border: none; border-bottom: 3px solid transparent;
+      color: #666; font-size: 14px; font-weight: 500; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: all .2s;
+    }
+    .tab-btn:hover { color: #ccc; }
+    .tab-btn.active { color: #f5c842; border-bottom-color: #f5c842; }
 
-  /* HEADER */
-  .header {
-    background: linear-gradient(135deg, #0a0a0f 0%, #13131a 50%, #1a1020 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 40px 24px 32px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 300px;
-    background: radial-gradient(ellipse, rgba(247,147,26,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(247,147,26,0.1);
-    border: 1px solid rgba(247,147,26,0.3);
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 12px;
-    color: var(--accent);
-    margin-bottom: 16px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .header h1 {
-    font-size: clamp(28px, 5vw, 48px);
-    font-weight: 800;
-    background: linear-gradient(135deg, #f7931a, #ffd700);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 12px;
-  }
-  .header p {
-    color: var(--muted);
-    font-size: 16px;
-    max-width: 520px;
-    margin: 0 auto 24px;
-  }
-  .header-tags {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .tag {
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 12px;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .tag.green { border-color: rgba(0,212,170,0.3); color: var(--green); background: rgba(0,212,170,0.05); }
-  .tag.orange { border-color: rgba(247,147,26,0.3); color: var(--accent); background: rgba(247,147,26,0.05); }
-  .tag.blue { border-color: rgba(98,126,234,0.3); color: var(--accent2); background: rgba(98,126,234,0.05); }
+    /* CONTENT */
+    .content { padding: 48px 60px; max-width: 1100px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-  /* LAYOUT */
-  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    /* CARDS */
+    .card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 14px; padding: 28px; margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 17px; font-weight: 700; color: #f5c842; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .card-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 
-  /* SECTION */
-  .section { margin-bottom: 48px; }
-  .section-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+    h4 { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+    p, li { color: #c0c0d8; font-size: 14px; line-height: 1.7; }
+    ul { padding-left: 18px; }
+    li { margin-bottom: 4px; }
+    code {
+      background: rgba(245,200,66,.1); color: #f5c842;
+      padding: 2px 7px; border-radius: 5px; font-size: 12px; font-family: monospace;
+    }
 
-  /* OVERVIEW CARDS */
-  .overview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-  .overview-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-  }
-  .overview-card .icon { font-size: 28px; margin-bottom: 8px; }
-  .overview-card .value {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .overview-card .label { font-size: 12px; color: var(--muted); }
+    /* WORKFLOW STEPS */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 20px; align-items: flex-start;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      min-width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px;
+      flex-shrink: 0;
+    }
+    .step-content { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+    .step-desc { font-size: 13px; color: #9090b0; line-height: 1.6; }
+    .step-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; margin-left: 8px;
+    }
 
-  /* PIPELINE */
-  .pipeline {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
+    /* FLUXO VISUAL */
+    .flow-row {
+      display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+      margin: 24px 0;
+    }
+    .flow-box {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 14px 18px;
+      font-size: 13px; text-align: center; min-width: 130px;
+    }
+    .flow-box strong { display: block; font-size: 14px; color: #fff; margin-bottom: 2px; }
+    .flow-box span { color: #888; font-size: 12px; }
+    .flow-arrow {
+      font-size: 20px; color: #f5c842; padding: 0 8px; flex-shrink: 0;
+    }
+    .flow-box.highlight { border-color: #f5c842; background: rgba(245,200,66,.07); }
+    .flow-box.green { border-color: #39FF14; background: rgba(39,255,20,.07); }
+    .flow-box.blue { border-color: #60a5fa; background: rgba(59,130,246,.07); }
+    .flow-box.purple { border-color: #a78bfa; background: rgba(139,92,246,.07); }
 
-  .phase {
-    display: flex;
-    gap: 20px;
-    position: relative;
-  }
-  .phase:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 27px;
-    top: 56px;
-    bottom: -1px;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--border), transparent);
-  }
+    /* CRONS TABLE */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; padding: 12px 14px; color: #666; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,.08); }
+    td { padding: 14px; border-bottom: 1px solid rgba(255,255,255,.05); color: #c0c0d8; }
+    tr:last-child td { border-bottom: none; }
+    td strong { color: #fff; }
 
-  .phase-number {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 800;
-    flex-shrink: 0;
-    border: 2px solid;
-    position: relative;
-    z-index: 1;
-  }
+    /* FORMAT PREVIEW */
+    .format-box {
+      background: #0d0d1a;
+      border: 1px solid rgba(245,200,66,.2);
+      border-radius: 10px; padding: 24px;
+      font-family: monospace; font-size: 13px;
+      line-height: 1.9; color: #e8e8f0;
+      white-space: pre-wrap;
+    }
+    .format-box .bold { font-weight: 700; color: #fff; }
+    .format-box .yellow { color: #f5c842; }
+    .format-box .green { color: #39FF14; }
+    .format-box .red { color: #f87171; }
+    .format-box .muted { color: #666; }
 
-  .phase-content {
-    flex: 1;
-    padding-bottom: 40px;
-  }
+    /* APIS */
+    .api-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .api-row:last-child { border-bottom: none; }
+    .api-dot { width: 8px; height: 8px; border-radius: 50%; background: #39FF14; flex-shrink: 0; }
+    .api-name { font-size: 14px; color: #fff; font-weight: 500; min-width: 160px; }
+    .api-url { font-size: 12px; color: #666; font-family: monospace; flex: 1; }
+    .api-data { font-size: 12px; color: #9090b0; }
 
-  .phase-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding-top: 12px;
-  }
-
-  .phase-title {
-    font-size: 18px;
-    font-weight: 700;
-  }
-  .phase-subtitle { font-size: 13px; color: var(--muted); }
-  .phase-time {
-    margin-left: auto;
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  /* AGENT CARDS */
-  .agents-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .agent-card {
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .agent-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-  }
-  .agent-card.nerd::before { background: linear-gradient(90deg, var(--accent2), transparent); }
-  .agent-card.trader::before { background: linear-gradient(90deg, var(--accent), transparent); }
-  .agent-card.bull::before { background: linear-gradient(90deg, var(--bull), transparent); }
-  .agent-card.bear::before { background: linear-gradient(90deg, var(--bear), transparent); }
-  .agent-card.aspira::before { background: linear-gradient(90deg, var(--accent3), transparent); }
-
-  .agent-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .agent-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .agent-avatar.nerd { background: rgba(98,126,234,0.15); }
-  .agent-avatar.trader { background: rgba(247,147,26,0.15); }
-  .agent-avatar.bull { background: rgba(0,212,170,0.15); }
-  .agent-avatar.bear { background: rgba(255,68,102,0.15); }
-  .agent-avatar.aspira { background: rgba(153,69,255,0.15); }
-
-  .agent-name { font-weight: 700; font-size: 14px; }
-  .agent-model {
-    font-size: 10px;
-    color: var(--muted);
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 6px;
-    margin-left: auto;
-  }
-
-  .agent-tasks {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .agent-tasks li {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .agent-tasks li::before {
-    content: '→';
-    color: var(--border);
-    flex-shrink: 0;
-  }
-
-  /* PARALLEL BADGE */
-  .parallel-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(98,126,234,0.1);
-    border: 1px solid rgba(98,126,234,0.2);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: var(--accent2);
-    margin-bottom: 12px;
-  }
-  .parallel-badge::before { content: '⚡'; }
-
-  /* ARROW */
-  .arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 0;
-    color: var(--border);
-    font-size: 20px;
-  }
-
-  /* REPORT PREVIEW */
-  .report-preview {
-    background: #0d0d14;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.8;
-    color: var(--text);
-  }
-  .report-preview .rline-title { color: var(--accent); font-weight: 700; }
-  .report-preview .rline-sep { color: var(--border); }
-  .report-preview .rline-price { color: var(--yellow); }
-  .report-preview .rline-tech { color: var(--accent2); }
-  .report-preview .rline-bull { color: var(--bull); }
-  .report-preview .rline-bear { color: var(--bear); }
-  .report-preview .rline-decision-buy { color: var(--green); font-weight: 700; font-size: 14px; }
-  .report-preview .rline-decision-wait { color: var(--yellow); font-weight: 700; font-size: 14px; }
-  .report-preview .rline-decision-avoid { color: var(--red); font-weight: 700; font-size: 14px; }
-  .report-preview .rline-muted { color: var(--muted); }
-
-  /* SETUP FLOW */
-  .setup-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-  }
-  .setup-step {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-    position: relative;
-  }
-  .setup-step-num {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: rgba(247,147,26,0.15);
-    border: 1px solid rgba(247,147,26,0.3);
-    color: var(--accent);
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 10px;
-  }
-  .setup-step-icon { font-size: 22px; margin-bottom: 8px; }
-  .setup-step-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .setup-step-ex { font-size: 11px; color: var(--muted); }
-
-  /* CONFIG */
-  .config-block {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .config-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--muted);
-    background: var(--card2);
-  }
-  .config-header .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .config-header .dot.r { background: #ff5f56; }
-  .config-header .dot.y { background: #ffbd2e; }
-  .config-header .dot.g { background: #27c93f; }
-  .config-body {
-    padding: 16px;
-    font-family: monospace;
-    font-size: 12px;
-    line-height: 1.8;
-  }
-  .cfg-key { color: var(--accent2); }
-  .cfg-val { color: var(--green); }
-  .cfg-comment { color: var(--muted); }
-
-  /* APIs */
-  .api-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-  }
-  .api-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .api-icon { font-size: 24px; }
-  .api-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
-  .api-desc { font-size: 11px; color: var(--muted); }
-  .api-free {
-    margin-left: auto;
-    font-size: 10px;
-    background: rgba(0,212,170,0.1);
-    border: 1px solid rgba(0,212,170,0.2);
-    color: var(--green);
-    border-radius: 4px;
-    padding: 2px 6px;
-    white-space: nowrap;
-  }
-
-  /* COST */
-  .cost-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-  .cost-row:last-child { border-bottom: none; }
-  .cost-row .cost-label { color: var(--muted); }
-  .cost-row .cost-val { font-weight: 600; }
-  .cost-row.total { background: rgba(247,147,26,0.05); }
-  .cost-row.total .cost-val { color: var(--accent); font-size: 16px; }
-
-  /* FOOTER */
-  .footer {
-    text-align: center;
-    padding: 40px 24px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .footer a { color: var(--accent); text-decoration: none; }
-
-  @media (max-width: 600px) {
-    .agents-row { grid-template-columns: 1fr; }
-    .overview-grid { grid-template-columns: repeat(2, 1fr); }
-    .phase { flex-direction: column; }
-    .phase-number { align-self: flex-start; }
-    .phase:not(:last-child)::after { display: none; }
-  }
-</style>
+    @media (max-width: 768px) {
+      .header { padding: 32px 24px; }
+      .content { padding: 32px 24px; }
+      .tabs { padding: 0 24px; }
+      .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
+      .flow-row { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div class="header-badge">📊 OpenClaw Skill</div>
-  <h1>Crypto Analyst Pro</h1>
-  <p>Análise diária automática com debate Bull vs Bear, orquestrada por múltiplos agentes de IA.</p>
-  <div class="header-tags">
-    <span class="tag green">100% APIs Gratuitas</span>
-    <span class="tag orange">Claude Haiku + Sonnet</span>
-    <span class="tag blue">Multi-Agent Pipeline</span>
-    <span class="tag">Setup em 4 perguntas</span>
-    <span class="tag">Telegram / WhatsApp</span>
+  <div class="header-top">
+    <span class="header-icon">📊</span>
+    <div>
+      <div class="header-title">BTC Analyst Diário</div>
+      <div class="header-sub">PRD + Workflow completo · Análise técnica automatizada de BTC</div>
+    </div>
+  </div>
+  <div class="status-row">
+    <span class="badge badge-green">🟢 Ativo em produção</span>
+    <span class="badge badge-yellow">⏰ 08:00 BRT todos os dias</span>
+    <span class="badge badge-blue">📱 Telegram tópico 450</span>
+    <span class="badge badge-purple">💬 WhatsApp Club Avisos</span>
+    <span class="badge badge-yellow">Atualizado: 20/04/2026</span>
   </div>
 </div>
 
-<div class="container">
-
-  <!-- OVERVIEW -->
-  <div class="overview-grid">
-    <div class="overview-card">
-      <div class="icon">🤖</div>
-      <div class="value">4</div>
-      <div class="label">Agentes por análise</div>
-    </div>
-    <div class="overview-card">
-      <div class="icon">⏱️</div>
-      <div class="value">~8min</div>
-      <div class="label">Por ativo analisado</div>
-    </div>
-    <div class="overview-card">
-      <div class="icon">💰</div>
-      <div class="value">~$0.08</div>
-      <div class="label">Custo por análise</div>
-    </div>
-    <div class="overview-card">
-      <div class="icon">📡</div>
-      <div class="value">0</div>
-      <div class="label">API keys necessárias</div>
-    </div>
-    <div class="overview-card">
-      <div class="icon">📊</div>
-      <div class="value">∞</div>
-      <div class="label">Ativos suportados</div>
-    </div>
-  </div>
-
-  <!-- SETUP FLOW -->
-  <div class="section">
-    <div class="section-title">🧙 Setup — 4 perguntas</div>
-    <div class="setup-steps">
-      <div class="setup-step">
-        <div class="setup-step-num">1</div>
-        <div class="setup-step-icon">📈</div>
-        <div class="setup-step-q">Quais ativos?</div>
-        <div class="setup-step-ex">BTC, ETH, SOL...</div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-step-num">2</div>
-        <div class="setup-step-icon">⏰</div>
-        <div class="setup-step-q">Que horas?</div>
-        <div class="setup-step-ex">08:00 (horário local)</div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-step-num">3</div>
-        <div class="setup-step-icon">👤</div>
-        <div class="setup-step-q">Perfil de trading?</div>
-        <div class="setup-step-ex">Holder / Swing / Day</div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-step-num">4</div>
-        <div class="setup-step-icon">📱</div>
-        <div class="setup-step-q">Onde receber?</div>
-        <div class="setup-step-ex">Telegram ou WhatsApp</div>
-      </div>
-      <div class="setup-step" style="border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.03);">
-        <div class="setup-step-num" style="background: rgba(0,212,170,0.15); border-color: rgba(0,212,170,0.3); color: var(--green);">✓</div>
-        <div class="setup-step-icon">🚀</div>
-        <div class="setup-step-q">Cron ativado!</div>
-        <div class="setup-step-ex">Análises todo dia no horário</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PIPELINE -->
-  <div class="section">
-    <div class="section-title">🏗️ Pipeline de análise</div>
-    <div class="pipeline">
-
-      <!-- PHASE 1 -->
-      <div class="phase">
-        <div class="phase-number" style="background: rgba(98,126,234,0.1); border-color: rgba(98,126,234,0.4); color: var(--accent2);">1</div>
-        <div class="phase-content">
-          <div class="phase-header">
-            <div>
-              <div class="phase-title">Coleta de dados</div>
-              <div class="phase-subtitle">NERD + TRADER rodando em paralelo</div>
-            </div>
-            <div class="phase-time">~2–3 min</div>
-          </div>
-          <div class="parallel-badge">Execução paralela — ambos ao mesmo tempo</div>
-          <div class="agents-row">
-            <div class="agent-card nerd">
-              <div class="agent-header">
-                <div class="agent-avatar nerd">🧠</div>
-                <div>
-                  <div class="agent-name">NERD</div>
-                  <div class="agent-model" style="color:var(--accent2)">Haiku</div>
-                </div>
-              </div>
-              <ul class="agent-tasks">
-                <li>Notícias últimas 24h + impacto</li>
-                <li>Fear & Greed Index (API real)</li>
-                <li>On-chain: flows, whales, hashrate</li>
-                <li>Macro: DXY, S&P500, Fed</li>
-                <li>Dominância BTC + market cap cripto</li>
-              </ul>
-            </div>
-            <div class="agent-card trader">
-              <div class="agent-header">
-                <div class="agent-avatar trader">📈</div>
-                <div>
-                  <div class="agent-name">TRADER</div>
-                  <div class="agent-model" style="color:var(--accent)">Haiku</div>
-                </div>
-              </div>
-              <ul class="agent-tasks">
-                <li>Preço atual + variação 24h/7d</li>
-                <li>Tendência 1h / 4h / 1D</li>
-                <li>Suportes e resistências</li>
-                <li>RSI 14 + MACD + Volume</li>
-                <li>Funding rate + Open Interest</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PHASE 2 -->
-      <div class="phase">
-        <div class="phase-number" style="background: rgba(0,212,170,0.1); border-color: rgba(0,212,170,0.4); color: var(--bull);">2</div>
-        <div class="phase-content">
-          <div class="phase-header">
-            <div>
-              <div class="phase-title">🐂 Bull Case</div>
-              <div class="phase-subtitle">TRADER constrói o argumento comprador</div>
-            </div>
-            <div class="phase-time">~1 min</div>
-          </div>
-          <div class="agents-row">
-            <div class="agent-card bull">
-              <div class="agent-header">
-                <div class="agent-avatar bull">🐂</div>
-                <div>
-                  <div class="agent-name">TRADER (modo Bull)</div>
-                  <div class="agent-model" style="color:var(--bull)">Sonnet</div>
-                </div>
-              </div>
-              <ul class="agent-tasks">
-                <li>Tese principal de alta (1 parágrafo)</li>
-                <li>3 argumentos com números reais</li>
-                <li>Gatilho: o que pode acelerar a subida</li>
-                <li>Alvo de preço (2-4 semanas)</li>
-                <li>Invalidação: onde a tese quebra</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PHASE 3 -->
-      <div class="phase">
-        <div class="phase-number" style="background: rgba(255,68,102,0.1); border-color: rgba(255,68,102,0.4); color: var(--bear);">3</div>
-        <div class="phase-content">
-          <div class="phase-header">
-            <div>
-              <div class="phase-title">🐻 Bear Case</div>
-              <div class="phase-subtitle">TRADER refuta o bull ponto a ponto</div>
-            </div>
-            <div class="phase-time">~1 min</div>
-          </div>
-          <div class="agents-row">
-            <div class="agent-card bear">
-              <div class="agent-header">
-                <div class="agent-avatar bear">🐻</div>
-                <div>
-                  <div class="agent-name">TRADER (modo Bear)</div>
-                  <div class="agent-model" style="color:var(--bear)">Sonnet</div>
-                </div>
-              </div>
-              <ul class="agent-tasks">
-                <li>Tese principal de baixa</li>
-                <li>Refutação dos 3 argumentos bull</li>
-                <li>3 riscos concretos com números</li>
-                <li>Gatilho: o que pode acelerar a queda</li>
-                <li>Alvo de queda realista</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PHASE 4 -->
-      <div class="phase">
-        <div class="phase-number" style="background: rgba(153,69,255,0.1); border-color: rgba(153,69,255,0.4); color: var(--accent3);">4</div>
-        <div class="phase-content">
-          <div class="phase-header">
-            <div>
-              <div class="phase-title">🎯 Síntese + Entrega</div>
-              <div class="phase-subtitle">ASPIRA decide e entrega o relatório</div>
-            </div>
-            <div class="phase-time">~1 min</div>
-          </div>
-          <div class="agents-row">
-            <div class="agent-card aspira">
-              <div class="agent-header">
-                <div class="agent-avatar aspira">🫡</div>
-                <div>
-                  <div class="agent-name">ASPIRA (Orquestrador)</div>
-                  <div class="agent-model" style="color:var(--accent3)">Sonnet</div>
-                </div>
-              </div>
-              <ul class="agent-tasks">
-                <li>Pondera bull vs bear com os dados</li>
-                <li>Considera perfil do usuário (holder/swing/day)</li>
-                <li>Decide: COMPRAR | AGUARDAR | EVITAR</li>
-                <li>Rating ⭐/5 + % confiança</li>
-                <li>Envia relatório via Telegram / WhatsApp</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- REPORT PREVIEW -->
-  <div class="section">
-    <div class="section-title">📄 Exemplo de relatório gerado</div>
-    <div class="report-preview">
-      <div class="rline-title">📊 ANÁLISE BTC — 23/03 | 08:00 BRT</div>
-      <div class="rline-sep">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-      <br>
-      <div class="rline-price">💰 PREÇO: $70.743 | 24h: +2.82% | Semana: -3.87%</div>
-      <br>
-      <div class="rline-tech">📊 TÉCNICO</div>
-      <div>Tendência 4h: Altista (acima EMA20 + EMA50)</div>
-      <div>RSI: 56.52 — neutro com viés de alta</div>
-      <div>Funding: -0.00003 (short squeeze ativo)</div>
-      <div>Suporte: $70.000 / $69.000</div>
-      <div>Resistência: $71.500 / $72.000</div>
-      <br>
-      <div>🌍 CONTEXTO</div>
-      <div>Fear & Greed: 8 — Extreme Fear 🔴</div>
-      <div>Strategy comprou 1.031 BTC esta semana</div>
-      <div>Fed sem corte, petróleo >$100, tensão Iran-Israel</div>
-      <br>
-      <div class="rline-sep">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-      <div class="rline-bull">🐂 BULL — alvo: $75.000</div>
-      <div class="rline-bull">• Short squeeze: funding neg + OI 87k BTC</div>
-      <div class="rline-bull">• Volume 2-3x acima da média confirma bounce</div>
-      <div class="rline-bull">• Smart money: Strategy + ETFs +$230M semanal</div>
-      <br>
-      <div class="rline-bear">🐻 BEAR — alvo: $67.000</div>
-      <div class="rline-bear">• Squeeze já acabou: funding quase neutro</div>
-      <div class="rline-bear">• ETF outflows $405M pós-FOMC dominam</div>
-      <div class="rline-bear">• -44% do ATH, correlação BTC/S&P positiva</div>
-      <br>
-      <div class="rline-sep">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-      <div class="rline-decision-wait">🎯 DECISÃO: AGUARDAR</div>
-      <div>⭐3/5 | Confiança: 62%</div>
-      <br>
-      <div class="rline-muted">Upside até $72k (+1.8%) vs downside $67-68k (-4%)</div>
-      <div class="rline-muted">Aguardar confirmação acima de $72k ou entrada em $67-68k</div>
-      <br>
-      <div class="rline-muted">⚠️ Não é conselho financeiro.</div>
-    </div>
-  </div>
-
-  <!-- APIS -->
-  <div class="section">
-    <div class="section-title">📡 APIs utilizadas (todas gratuitas)</div>
-    <div class="api-grid">
-      <div class="api-card">
-        <div class="api-icon">🦎</div>
-        <div>
-          <div class="api-name">CoinGecko</div>
-          <div class="api-desc">Preço + variação 24h/7d</div>
-        </div>
-        <div class="api-free">Grátis</div>
-      </div>
-      <div class="api-card">
-        <div class="api-icon">🟡</div>
-        <div>
-          <div class="api-name">Binance</div>
-          <div class="api-desc">Candles 4h (OHLCV)</div>
-        </div>
-        <div class="api-free">Grátis</div>
-      </div>
-      <div class="api-card">
-        <div class="api-icon">📉</div>
-        <div>
-          <div class="api-name">Binance Futures</div>
-          <div class="api-desc">Funding rate + Open Interest</div>
-        </div>
-        <div class="api-free">Grátis</div>
-      </div>
-      <div class="api-card">
-        <div class="api-icon">😨</div>
-        <div>
-          <div class="api-name">alternative.me</div>
-          <div class="api-desc">Fear & Greed Index</div>
-        </div>
-        <div class="api-free">Grátis</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONFIG -->
-  <div class="section">
-    <div class="section-title">⚙️ Configuração (CONFIG.md)</div>
-    <div class="config-block">
-      <div class="config-header">
-        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-        <span style="margin-left:8px">CONFIG.md — gerado automaticamente no setup</span>
-      </div>
-      <div class="config-body">
-        <span class="cfg-key">ativos</span>: [<span class="cfg-val">"BTC"</span>, <span class="cfg-val">"ETH"</span>, <span class="cfg-val">"SOL"</span>]<br>
-        <span class="cfg-key">horario</span>: <span class="cfg-val">"08:00"</span>  <span class="cfg-comment"># horário local</span><br>
-        <span class="cfg-key">timezone</span>: <span class="cfg-val">"America/Sao_Paulo"</span><br>
-        <span class="cfg-key">perfil</span>: <span class="cfg-val">"swing"</span>  <span class="cfg-comment"># conservador | moderado | agressivo</span><br>
-        <span class="cfg-key">foco</span>: <span class="cfg-val">"swing"</span>  <span class="cfg-comment"># holder | swing | day</span><br>
-        <span class="cfg-key">canal</span>: <span class="cfg-val">"telegram:-100123456:450"</span><br>
-        <span class="cfg-key">idioma</span>: <span class="cfg-val">"pt"</span>  <span class="cfg-comment"># pt | en | es</span><br>
-        <span class="cfg-key">detalhe</span>: <span class="cfg-val">"completo"</span>  <span class="cfg-comment"># resumido | completo</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- COST -->
-  <div class="section">
-    <div class="section-title">💰 Custo estimado</div>
-    <div class="config-block">
-      <div class="cost-row">
-        <span class="cost-label">Coleta (NERD + TRADER × Haiku)</span>
-        <span class="cost-val">~$0.01 / análise</span>
-      </div>
-      <div class="cost-row">
-        <span class="cost-label">Bull + Bear + Síntese (Sonnet)</span>
-        <span class="cost-val">~$0.06 / análise</span>
-      </div>
-      <div class="cost-row">
-        <span class="cost-label">Por dia — BTC + ETH</span>
-        <span class="cost-val">~$0.20–0.30</span>
-      </div>
-      <div class="cost-row total">
-        <span class="cost-label"><strong>Por mês — BTC + ETH + SOL</strong></span>
-        <span class="cost-val">~$12–15 / mês</span>
-      </div>
-    </div>
-  </div>
-
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('prd', this)">📋 PRD</button>
+  <button class="tab-btn" onclick="switchTab('workflow', this)">🔄 Workflow</button>
+  <button class="tab-btn" onclick="switchTab('formato', this)">📝 Formato</button>
+  <button class="tab-btn" onclick="switchTab('apis', this)">🔌 APIs & Dados</button>
+  <button class="tab-btn" onclick="switchTab('crons', this)">⚙️ Crons</button>
 </div>
 
-<div class="footer">
-  <p>Desenvolvido por <a href="https://instagram.com/intuscripto">Diego Spanevello</a> · Intus Cripto Club</p>
-  <p style="margin-top:8px; font-size:11px">Não é conselho financeiro. Use por sua conta e risco.</p>
-</div>
+<div class="content">
+
+  <!-- ===== PRD ===== -->
+  <div id="tab-prd" class="tab-panel active">
+
+    <div class="card">
+      <div class="card-title">🎯 Objetivo</div>
+      <p>Entregar <strong style="color:#fff;">todo dia às 08:00 BRT</strong> uma leitura curta e acionável de BTC com dados reais de APIs públicas. A análise inclui contexto técnico (RSI, suporte, resistência, tendência, volume relativo), contexto macro (Fear &amp; Greed, dominância, notícias) e uma postura final única em formato fixo: <strong style="color:#39FF14;">E interessante estar Comprado.</strong> / <strong style="color:#f5c842;">Faz sentido manter postura Neutra.</strong> / <strong style="color:#f87171;">E melhor estar Menos Exposto.</strong></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👥 Destinatários</div>
+      <div class="card-grid">
+        <div>
+          <h4>Diego Spanevello</h4>
+          <p>Recebe via <strong style="color:#fff;">Telegram tópico 450 (Trading)</strong> no grupo Central ASPIRA. Uso pessoal para orientar decisões de trading e posicionamento.</p>
+        </div>
+        <div>
+          <h4>Comunidade IntusCripto Club</h4>
+          <p>Recebe via <strong style="color:#fff;">WhatsApp grupo Avisos Club</strong> (JID: 120363136035311553@g.us). Conteúdo educativo diário para membros do club.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✅ Funcionalidades</div>
+      <div class="card-grid">
+        <div>
+          <h4>Dados coletados (real-time)</h4>
+          <ul>
+            <li>Preço BTC com variação 24h e 7d</li>
+            <li>20 velas 4h da Binance (klines)</li>
+            <li>Funding rate atual (Binance Futures)</li>
+            <li>Fear &amp; Greed Index</li>
+            <li>Dominância BTC e Market Cap global</li>
+            <li>3 notícias das últimas 24h</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Métricas calculadas</h4>
+          <ul>
+            <li>RSI(14) via python3 nas klines</li>
+            <li>Suporte = mínima das 20 velas</li>
+            <li>Resistência = máxima das 20 velas</li>
+            <li>Tendência (close atual vs 20 velas atrás)</li>
+            <li>Volume relativo (atual ÷ média 19 anteriores)</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Análise gerada</h4>
+          <ul>
+            <li>Forças com argumentos numéricos objetivos</li>
+            <li>Riscos com gatilhos e fragilidades do setup</li>
+            <li>Classificação do setup: BREAKOUT / RECLAIM / PULLBACK / AUSENTE</li>
+            <li>Postura final única em frase exata padronizada</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Entrega</h4>
+          <ul>
+            <li>Telegram 08:00 BRT — tópico 450</li>
+            <li>WhatsApp 08:05 BRT — Club Avisos</li>
+            <li>Formato compacto em 3 blocos: Forças / Riscos / Postura</li>
+            <li>⚠️ Disclaimer "Não é conselho financeiro"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🚫 Fora do escopo</div>
+      <div class="card-grid">
+        <div>
+          <ul>
+            <li>Análise de altcoins (apenas BTC)</li>
+            <li>Sinais de entrada com preço exato</li>
+            <li>Gestão de posições ou stop loss</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>Dados de corretoras pagas ou APIs com key</li>
+            <li>Subagentes — tudo roda na sessão principal</li>
+            <li>Histórico acumulado ou backtesting</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚙️ Stack Técnica</div>
+      <div class="card-grid-3">
+        <div>
+          <h4>Execução</h4>
+          <p>OpenClaw cron job (sessionTarget: isolated)<br>Modelo: <code>openai-codex/gpt-5.4</code><br>Timeout: 300s</p>
+        </div>
+        <div>
+          <h4>Coleta</h4>
+          <p>curl direto para APIs públicas<br>Sem autenticação<br>python3 para cálculos</p>
+        </div>
+        <div>
+          <h4>Entrega</h4>
+          <p>OpenClaw message tool<br>channel: telegram + whatsapp<br>Sem dependências externas</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /prd -->
+
+  <!-- ===== WORKFLOW ===== -->
+  <div id="tab-workflow" class="tab-panel">
+
+    <div class="card">
+      <div class="card-title">🔄 Fluxo Visual</div>
+      <div class="flow-row">
+        <div class="flow-box highlight">
+          <strong>⏰ Cron</strong>
+          <span>08:00 BRT</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box blue">
+          <strong>📡 5 APIs</strong>
+          <span>Coleta paralela</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box purple">
+          <strong>🐍 python3</strong>
+          <span>RSI + cálculos</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <strong>🔍 web_search</strong>
+          <span>Notícias 24h</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <strong>🧠 ASPIRA</strong>
+          <span>Forças/Riscos/Postura</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">
+          <strong>📤 Entrega</strong>
+          <span>TG + WA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Passos Detalhados</div>
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num" style="background:rgba(245,200,66,.15);color:#f5c842;">1</div>
+          <div class="step-content">
+            <div class="step-title">Cron dispara <span class="step-tag" style="background:rgba(245,200,66,.1);color:#f5c842;">08:00 BRT</span></div>
+            <div class="step-desc">Job <code>f4348bd7</code> cria sessão isolada com <code>openai-codex/gpt-5.4</code> (timeout 300s). Nenhum subagente é spawnado, tudo roda na mesma sessão.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:rgba(59,130,246,.15);color:#60a5fa;">2</div>
+          <div class="step-content">
+            <div class="step-title">Coleta de dados <span class="step-tag" style="background:rgba(59,130,246,.1);color:#60a5fa;">exec curl</span></div>
+            <div class="step-desc">5 chamadas curl sequenciais:<br>
+              • <code>CoinGecko</code> → preço BTC, var 24h/7d<br>
+              • <code>Binance klines</code> → 20 candles 4h (OHLCV)<br>
+              • <code>Binance Futures</code> → funding rate atual<br>
+              • <code>alternative.me</code> → Fear &amp; Greed Index<br>
+              • <code>CoinGecko Global</code> → dominância BTC + market cap total
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:rgba(139,92,246,.15);color:#a78bfa;">3</div>
+          <div class="step-content">
+            <div class="step-title">Cálculo de indicadores <span class="step-tag" style="background:rgba(139,92,246,.1);color:#a78bfa;">python3</span></div>
+            <div class="step-desc">Script python3 processa as 20 klines e calcula:<br>
+              • RSI(14) — ganhos e perdas médias das últimas 14 velas<br>
+              • Suporte = mínima das 20 velas | Resistência = máxima<br>
+              • Tendência = close atual vs close 20 velas atrás (ALTA/BAIXA)<br>
+              • Volume relativo = vol atual ÷ média das 19 velas anteriores
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:rgba(16,185,129,.15);color:#34d399;">4</div>
+          <div class="step-content">
+            <div class="step-title">Busca de notícias <span class="step-tag" style="background:rgba(16,185,129,.1);color:#34d399;">web_search</span></div>
+            <div class="step-desc">Query: <code>"Bitcoin market today"</code> via <code>web_search</code>, com fallback para <code>tavily_search</code> se necessário. Retorna até 3 headlines relevantes das últimas 24h para contexto macro, regulatório ou de sentimento.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:rgba(245,200,66,.15);color:#f5c842;">5</div>
+          <div class="step-content">
+            <div class="step-title">Análise e montagem <span class="step-tag" style="background:rgba(245,200,66,.1);color:#f5c842;">ASPIRA</span></div>
+            <div class="step-desc">Com todos os dados consolidados, ASPIRA monta:<br>
+              • Forças — 2 a 4 bullets curtos com números e contexto<br>
+              • Riscos — 2 a 4 bullets curtos com gatilhos e fragilidades<br>
+              • Classificação do setup: BREAKOUT / RECLAIM / PULLBACK / AUSENTE<br>
+              • Postura final única em uma das 3 frases fixas
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:rgba(39,255,20,.15);color:#39FF14;">6</div>
+          <div class="step-content">
+            <div class="step-title">Entrega <span class="step-tag" style="background:rgba(39,255,20,.1);color:#39FF14;">message tool</span></div>
+            <div class="step-desc">
+              • Job <code>f4348bd7</code> → <strong style="color:#fff;">Telegram</strong> tópico 450 (Trading) às 08:00 BRT<br>
+              • Job <code>6e6e34b6</code> → <strong style="color:#fff;">WhatsApp</strong> grupo Avisos Club às 08:05 BRT<br>
+              Mensagem única por destino, com o mesmo framing e *negrito* nos títulos.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /workflow -->
+
+  <!-- ===== FORMATO ===== -->
+  <div id="tab-formato" class="tab-panel">
+
+    <div class="card">
+      <div class="card-title">📝 Formato da Mensagem</div>
+      <p style="margin-bottom:20px;font-size:13px;color:#888;">Markdown do Telegram/WhatsApp, com asteriscos para negrito. Tamanho médio: ~12 a 16 linhas.</p>
+      <div class="format-box"><span class="bold">*📊 BTC — DD/MM | HH:MM BRT*</span>
+$X | 24h: X% | 😱 Medo: X/100 — [label]
+Dom: X% | RSI: X | Funding: X%
+Tend: X | Suporte: $X | Resist: $X | Vol: Xx média
+Setup: BREAKOUT | RECLAIM | PULLBACK | AUSENTE
+
+<span class="bold">*🟢 Forças*</span>
+• [força 1 com número]
+• [força 2 com número]
+
+<span class="bold">*🔴 Riscos*</span>
+• [risco 1 com número]
+• [risco 2 com gatilho]
+
+<span class="bold">*🎯 Postura:*</span>
+E interessante estar Comprado.
+OU
+Faz sentido manter postura Neutra.
+OU
+E melhor estar Menos Exposto.
+
+⚠️ Não é conselho financeiro.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💡 Regras do Formato</div>
+      <div class="card-grid">
+        <div>
+          <h4>Tamanho</h4>
+          <ul>
+            <li>~12 a 16 linhas no total</li>
+            <li>Forças e Riscos: 2 a 4 bullets curtos cada</li>
+            <li>Postura: exatamente 1 frase final</li>
+            <li>Contexto: no máximo 3 headlines em 1 linha por item</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Estilo</h4>
+          <ul>
+            <li>*negrito* nos títulos de seção</li>
+            <li>Números sempre com $, % e contexto</li>
+            <li>Postura deve ser 1 das 3 frases exatas, sem inventar variação</li>
+            <li>Português brasileiro, horário BRT</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Exemplo Real — 26/03/2026</div>
+      <div class="format-box"><span class="bold">*📊 BTC — 26/03 | 10:10 BRT*</span>
+$69.412 | 24h: -2,77% | 😱 Medo: 10/100 — Medo Extremo
+Dom: 56,5% | RSI: 37,9 | Funding: +0,0014%
+Tend: BAIXA | Suporte: $67.916 | Resist: $72.026 | Vol: 0,14x média
+Setup: AUSENTE
+
+<span class="bold">*🟢 Forças*</span>
+• RSI em 37,9 já entra em zona de exaustão vendedora e aumenta chance de repique técnico.
+• Dominância em 56,5% e funding neutro mostram que ainda não há excesso claro de alavancagem comprada.
+
+<span class="bold">*🔴 Riscos*</span>
+• Volume em 0,14x da média mostra ausência de comprador de verdade.
+• Perder $67.900 abre espaço para continuação até a faixa de $65.000 sem muito suporte intermediário.
+
+<span class="bold">*🎯 Postura:*</span>
+Faz sentido manter postura Neutra.
+
+⚠️ Não é conselho financeiro.</div>
+    </div>
+
+  </div><!-- /formato -->
+
+  <!-- ===== APIS ===== -->
+  <div id="tab-apis" class="tab-panel">
+
+    <div class="card">
+      <div class="card-title">🔌 APIs Utilizadas</div>
+      <p style="margin-bottom:20px;font-size:13px;color:#888;">Todas públicas, sem autenticação, sem custo.</p>
+
+      <div class="api-row">
+        <div class="api-dot"></div>
+        <div class="api-name">CoinGecko — Preço</div>
+        <div class="api-url">api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_7d_change=true</div>
+        <div class="api-data">Preço, var 24h, var 7d</div>
+      </div>
+      <div class="api-row">
+        <div class="api-dot"></div>
+        <div class="api-name">Binance — Klines 4h</div>
+        <div class="api-url">api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=4h&limit=20</div>
+        <div class="api-data">OHLCV 20 candles → RSI, suporte, resistência, volume</div>
+      </div>
+      <div class="api-row">
+        <div class="api-dot"></div>
+        <div class="api-name">Binance Futures — Funding</div>
+        <div class="api-url">fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=1</div>
+        <div class="api-data">Funding rate atual (viés long/short)</div>
+      </div>
+      <div class="api-row">
+        <div class="api-dot"></div>
+        <div class="api-name">Fear &amp; Greed Index</div>
+        <div class="api-url">api.alternative.me/fng/?limit=1</div>
+        <div class="api-data">Índice 0-100 + classificação textual</div>
+      </div>
+      <div class="api-row">
+        <div class="api-dot"></div>
+        <div class="api-name">CoinGecko — Global</div>
+        <div class="api-url">api.coingecko.com/api/v3/global</div>
+        <div class="api-data">Dominância BTC %, market cap total, var 24h</div>
+      </div>
+      <div class="api-row">
+        <div class="api-dot" style="background:#60a5fa;"></div>
+        <div class="api-name">web_search</div>
+        <div class="api-url">Query: "Bitcoin market today"</div>
+        <div class="api-data">Busca principal de notícias e contexto das últimas 24h</div>
+      </div>
+      <div class="api-row">
+        <div class="api-dot" style="background:#a78bfa;"></div>
+        <div class="api-name">tavily_search (fallback)</div>
+        <div class="api-url">Mesmo tema, acionado só se faltar contexto no web_search</div>
+        <div class="api-data">Fallback de contexto, nunca fonte paralela obrigatória</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🐍 Cálculo RSI — Python3</div>
+      <pre style="background:#0d0d1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:20px;font-size:12px;line-height:1.7;color:#c0c0d8;overflow-x:auto;">closes = [float(x[4]) for x in klines]
+volumes = [float(x[5]) for x in klines]
+highs   = [float(x[2]) for x in klines]
+lows    = [float(x[3]) for x in klines]
+
+# RSI(14)
+gains  = [max(closes[i]-closes[i-1], 0) for i in range(1, len(closes))]
+losses = [max(closes[i-1]-closes[i], 0) for i in range(1, len(closes))]
+avg_gain = sum(gains[-14:]) / 14
+avg_loss = sum(losses[-14:]) / 14
+rsi = 100 - (100 / (1 + avg_gain/avg_loss)) if avg_loss > 0 else 100
+
+# Suporte / Resistência / Tendência / Volume
+suporte     = min(lows)
+resistencia = max(highs)
+tendencia   = "ALTA" if closes[-1] > closes[0] else "BAIXA"
+avg_vol     = sum(volumes[:-1]) / len(volumes[:-1])
+vol_ratio   = volumes[-1] / avg_vol</pre>
+    </div>
+
+  </div><!-- /apis -->
+
+  <!-- ===== CRONS ===== -->
+  <div id="tab-crons" class="tab-panel">
+
+    <div class="card">
+      <div class="card-title">⚙️ Jobs Configurados</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Job ID</th>
+            <th>Nome</th>
+            <th>Horário</th>
+            <th>Destino</th>
+            <th>Modelo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>f4348bd7</code></td>
+            <td><strong>BTC Analyst — Telegram</strong></td>
+            <td><strong style="color:#fff;">08:00 BRT</strong><br><span style="font-size:11px;color:#666;">0 11 * * * UTC</span></td>
+            <td>Telegram<br>tópico 450 (Trading)</td>
+            <td><code>openai-codex/gpt-5.4</code></td>
+            <td><span style="color:#39FF14;font-weight:600;">🟢 Ativo</span></td>
+          </tr>
+          <tr>
+            <td><code>6e6e34b6</code></td>
+            <td><strong>BTC Analyst — WhatsApp</strong></td>
+            <td><strong style="color:#fff;">08:05 BRT</strong><br><span style="font-size:11px;color:#666;">5 11 * * * UTC</span></td>
+            <td>WhatsApp<br>Grupo Club Avisos</td>
+            <td><code>openai-codex/gpt-5.4</code></td>
+            <td><span style="color:#39FF14;font-weight:600;">🟢 Ativo</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color:#666;font-size:12px;margin-top:16px;">Timeout: 300s · sessionTarget: isolated · Sem subagentes · delivery: none</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔧 Configuração do Payload</div>
+      <div class="card-grid">
+        <div>
+          <h4>Passos do agente</h4>
+          <ol style="padding-left:18px;color:#c0c0d8;font-size:14px;line-height:1.8;">
+            <li>Coletar dados via curl (5 APIs)</li>
+            <li>Calcular indicadores via python3</li>
+            <li>Buscar contexto via web_search com fallback tavily_search</li>
+            <li>Classificar setup e montar relatório em Forças / Riscos / Postura</li>
+            <li>Enviar via message tool</li>
+          </ol>
+        </div>
+        <div>
+          <h4>Regras fixas</h4>
+          <ul>
+            <li>NÃO spawnar subagentes</li>
+            <li>Tudo na mesma sessão isolada</li>
+            <li>Horário sempre em BRT (UTC-3)</li>
+            <li>Português brasileiro obrigatório</li>
+            <li>Disclaimer no final sempre</li>
+            <li>Postura final deve ser exatamente 1 das 3 frases fixas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📅 Histórico de Versões</div>
+      <table>
+        <thead><tr><th>Data</th><th>Versão</th><th>Mudança</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>20/04/2026</td>
+            <td><code>v1.3</code></td>
+            <td><strong>Framing atualizado</strong> — saída trocada para <strong>Forças / Riscos / Postura</strong>, setup classificado em BREAKOUT / RECLAIM / PULLBACK / AUSENTE, fallback explícito de <code>tavily_search</code> e modelo documentado como <code>openai-codex/gpt-5.4</code></td>
+          </tr>
+          <tr>
+            <td>26/03/2026</td>
+            <td><code>v1.0</code></td>
+            <td><strong>Lançamento</strong> — análise BTC diária, formato compacto com negrito, 2 crons (Telegram + WhatsApp)</td>
+          </tr>
+          <tr style="color:#666;">
+            <td>26/03/2026</td>
+            <td><code>v0.3</code></td>
+            <td>Fix: remoção de subagentes — cron executava spawn e saía sem entregar</td>
+          </tr>
+          <tr style="color:#666;">
+            <td>26/03/2026</td>
+            <td><code>v0.2</code></td>
+            <td>Formato reduzido 30% + negrito nos títulos a pedido de Diego</td>
+          </tr>
+          <tr style="color:#666;">
+            <td>26/03/2026</td>
+            <td><code>v0.1</code></td>
+            <td>Criação inicial com BTC + ETH (descontinuado — simplificado para BTC only)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /crons -->
+
+</div><!-- /content -->
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
 
 </body>
 </html>
