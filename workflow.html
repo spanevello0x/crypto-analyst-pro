@@ -291,7 +291,7 @@
       <div class="card-grid-3">
         <div>
           <h4>Execução</h4>
-          <p>OpenClaw cron job (sessionTarget: isolated)<br>Modelo: <code>openai-codex/gpt-5.4</code><br>Timeout: 300s</p>
+          <p>OpenClaw cron job (sessionTarget: isolated)<br>Modelo: <code>openai-codex/gpt-5.4</code><br>Timeout: 480s</p>
         </div>
         <div>
           <h4>Coleta</h4>
@@ -352,7 +352,7 @@
           <div class="step-num" style="background:rgba(245,200,66,.15);color:#f5c842;">1</div>
           <div class="step-content">
             <div class="step-title">Cron dispara <span class="step-tag" style="background:rgba(245,200,66,.1);color:#f5c842;">08:00 BRT</span></div>
-            <div class="step-desc">Job <code>f4348bd7</code> cria sessão isolada com <code>openai-codex/gpt-5.4</code> (timeout 300s). Nenhum subagente é spawnado, tudo roda na mesma sessão.</div>
+            <div class="step-desc">Jobs <code>f4348bd7</code> e <code>6e6e34b6</code> rodam em sessão isolada com <code>openai-codex/gpt-5.4</code> (timeout 480s). Nenhum subagente é spawnado, tudo roda na mesma sessão.</div>
           </div>
         </div>
 
@@ -609,7 +609,7 @@ vol_ratio   = volumes[-1] / avg_vol</pre>
           </tr>
         </tbody>
       </table>
-      <p style="color:#666;font-size:12px;margin-top:16px;">Timeout: 300s · sessionTarget: isolated · Sem subagentes · delivery: none</p>
+      <p style="color:#666;font-size:12px;margin-top:16px;">Timeout: 480s · sessionTarget: isolated · Sem subagentes · delivery: none</p>
     </div>
 
     <div class="card">
